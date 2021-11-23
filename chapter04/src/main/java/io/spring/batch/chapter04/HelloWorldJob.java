@@ -1,6 +1,7 @@
 package io.spring.batch.chapter04;
 
 import io.spring.batch.chapter04.incrementer.DailyJobTimestamper;
+import io.spring.batch.chapter04.listener.JobLoggerListener;
 import io.spring.batch.chapter04.validator.ParameterValidator;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -10,6 +11,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.CompositeJobParametersValidator;
 import org.springframework.batch.core.job.DefaultJobParametersValidator;
+import org.springframework.batch.core.listener.JobListenerFactoryBean;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +50,7 @@ public class HelloWorldJob {
 
         defaultJobParametersValidator.afterPropertiesSet();
 
-        validator.setValidators(
+       validator.setValidators(
                 Arrays.asList(new ParameterValidator(),
                         defaultJobParametersValidator)
         );
@@ -63,6 +65,8 @@ public class HelloWorldJob {
                 .validator(validator())
 //                .incrementer(new RunIdIncrementer())
                 .incrementer(new DailyJobTimestamper())
+//                .listener(new JobLoggerListener()) // JobExecutionListener 구현하는 경우
+                .listener(JobListenerFactoryBean.getListener(new JobLoggerListener())) // 어노테이션 사용하는 경우
                 .build();
     }
 
