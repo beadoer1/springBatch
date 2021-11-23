@@ -1,5 +1,6 @@
 package io.spring.batch.chapter04;
 
+import io.spring.batch.chapter04.incrementer.DailyJobTimestamper;
 import io.spring.batch.chapter04.validator.ParameterValidator;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -41,7 +42,8 @@ public class HelloWorldJob {
         DefaultJobParametersValidator defaultJobParametersValidator =
                 new DefaultJobParametersValidator(
                         new String[]{"fileName"},
-                        new String[]{"name"}
+//                        new String[]{"name", "run.id"} // JobParametersIncrementer 를 구현한 RunIdIncrementer 가 기본적으로 run.id 인 long 타입 파라미터 값을 증가시킨다.
+                        new String[]{"name", "currentDate"} // custom JobParametersIncrementer 인 DailyJobTimestamper 를 활용하기 위한 param
                 );
 
         defaultJobParametersValidator.afterPropertiesSet();
@@ -59,6 +61,8 @@ public class HelloWorldJob {
         return this.jobBuilderFactory.get("basicJob")
                 .start(step1())
                 .validator(validator())
+//                .incrementer(new RunIdIncrementer())
+                .incrementer(new DailyJobTimestamper())
                 .build();
     }
 
