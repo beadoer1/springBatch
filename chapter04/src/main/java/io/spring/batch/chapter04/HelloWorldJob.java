@@ -1,5 +1,7 @@
 package io.spring.batch.chapter04;
 
+import io.spring.batch.chapter04.executionContext.JobExecutionTestTasklet;
+import io.spring.batch.chapter04.executionContext.StepExecutionTestTasklet;
 import io.spring.batch.chapter04.incrementer.DailyJobTimestamper;
 import io.spring.batch.chapter04.listener.JobLoggerListener;
 import io.spring.batch.chapter04.validator.ParameterValidator;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import sun.jvm.hotspot.HelloWorld;
 
 import java.util.Arrays;
 
@@ -73,7 +76,9 @@ public class HelloWorldJob {
     @Bean
     public Step step1() {
         return this.stepBuilderFactory.get("step1")
-                .tasklet(helloWorldTasklet(null, null)) // 늦은 바인딩 시 Scope Bean 생성 시 인자를 넣어주므로 사전에 어떤 값을 넣어도 상관없다.
+//                .tasklet(helloWorldTasklet(null, null)) // 늦은 바인딩 시 Scope Bean 생성 시 인자를 넣어주므로 사전에 어떤 값을 넣어도 상관없다.
+//                .tasklet(new JobExecutionTestTasklet()) // JobExecutionTestTasklet test 를 위한 tasklet 실행
+                .tasklet(new StepExecutionTestTasklet()) // StepExecutionTestTasklet test 를 위한 tasklet 실행
                 .build();
     }
 
